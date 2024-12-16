@@ -278,7 +278,13 @@ int FrontEngineInterface::GetPhone(const std::string &word, std::string &phone) 
     // 判断 word 在不在 词典里，如果不在，进行CutAll分词
     if (word_phone_map.find(word) == word_phone_map.end()) {
         std::vector<std::string> wordcut;
-        _jieba->CutAll(word, wordcut);
+        _jieba->Cut(word, wordcut,false);
+        // // 打印 wordcut 的元素
+        // std::cout << "wordcut: ";
+        // for (const auto& w : wordcut) {
+        //     std::cout << w << " ";
+        // }
+        std::cout << std::endl;
         phone = word_phone_map[wordcut[0]];
         for (int i = 1; i < wordcut.size(); i++) {
             phone += (" " + word_phone_map[wordcut[i]]);
@@ -335,7 +341,9 @@ bool FrontEngineInterface::IsReduplication(const std::string &word) {
 // 获取每个字词的声母和韵母列表， word_initials 为声母列表，word_finals 为韵母列表
 int FrontEngineInterface::GetInitialsFinals(const std::string &word, std::vector<std::string> &word_initials, std::vector<std::string> &word_finals) {
     std::string phone; 
+    // std::cout << "==================" <<std::endl;
     GetPhone(word, phone); //获取字词对应的音素
+    // std::cout<< "一开始的word：" << word << " 音素："<<phone<<std::endl;
     std::vector<std::string> phone_vec = absl::StrSplit(phone, " ");
     //获取韵母，每个字的音素有1或者2个，start为单个字音素的起始位置。
     int start = 0; 
@@ -354,7 +362,28 @@ int FrontEngineInterface::GetInitialsFinals(const std::string &word, std::vector
             start += 1;
         }
     }
+   
     
+    // // 打印断言中各项的值
+    // std::cout << word <<std::endl;
+    // std::cout << "word_finals.size(): " << word_finals.size() << std::endl;
+    // std::cout << "speechnn::utf8string2wstring(word).length(): " << speechnn::utf8string2wstring(word).length() << std::endl;
+    // std::cout << "word_initials.size(): " << word_initials.size() << std::endl;
+    
+    // // 打印 word_initials 的元素
+    // std::cout << "word_initials: ";
+    // for (const auto& initial : word_initials) {
+    //     std::cout << initial << " ";
+    // }
+    // std::cout << std::endl;
+
+    // // 打印 word_finals 的元素
+    // std::cout << "word_finals: ";
+    // for (const auto& final : word_finals) {
+    //     std::cout << final << " ";
+    // }
+    // std::cout << std::endl;
+    // std::cout << "==================" <<std::endl;
     assert(word_finals.size() == speechnn::utf8string2wstring(word).length() && word_finals.size() == word_initials.size());
 
     return 0;
